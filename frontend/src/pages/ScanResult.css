@@ -1,0 +1,253 @@
+.scan-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.scan-page::before {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.12), transparent 70%);
+  top: -150px;
+  left: -150px;
+  pointer-events: none;
+}
+
+.scan-page::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.1), transparent 70%);
+  bottom: -200px;
+  right: -200px;
+  pointer-events: none;
+}
+
+.scan-loading {
+  position: relative;
+  z-index: 1;
+}
+
+.scan-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  position: relative;
+  z-index: 1;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Error State */
+.scan-error-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.scan-card h2 {
+  text-align: center;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+/* Device Header */
+.scan-device-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.scan-device-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--bg-input);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.scan-device-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Info Grid */
+.scan-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.scan-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scan-info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scan-info-value {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.scan-info-value a {
+  color: var(--accent-cyan-light);
+}
+
+.scan-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 0;
+}
+
+/* Chat Section */
+.scan-chat-section {
+  margin-bottom: 24px;
+}
+
+.scan-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.scan-chat-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(124, 58, 237, 0.12);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.scan-chat-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.scan-chat-header p {
+  font-size: 0.8rem;
+}
+
+.scan-chat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Footer */
+.scan-footer {
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.scan-powered {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Action Buttons */
+.scan-action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.scan-action-btn {
+  flex: 1;
+}
+
+.btn-call {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+.btn-call:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+}
+
+/* Calling State */
+.scan-calling {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.scan-calling span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.scan-calling-pulse {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: callingPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes callingPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+@media (max-width: 480px) {
+  .scan-action-buttons {
+    flex-direction: column;
+  }
+}
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+        #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin: 10px 0; }
+        input, button { padding: 8px; margin: 4px; }
+        .msg { padding: 4px 0; border-bottom: 1px solid #eee; }
+        .status { color: green; font-weight: bold; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>WebSocket Chat Test</h2>
+
+    <div>
+        <label>Room ID:</label>
+        <input id="roomId" type="text" value="room1" />
+        <button onclick="connect()">Connect</button>
+        <button onclick="disconnect()">Disconnect</button>
+        <span id="status"></span>
+    </div>
+
+    <div id="messages"></div>
+
+    <div>
+        <input id="sender" type="text" placeholder="Your name" />
+        <input id="content" type="text" placeholder="Message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        let stompClient = null;
+
+        function connect() {
+            const roomId = document.getElementById('roomId').value;
+            const socket = new SockJS('/chat');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function () {
+                document.getElementById('status').innerHTML = '✅ Connected';
+                document.getElementById('status').className = 'status';
+
+                // Subscribe to room messages
+                stompClient.subscribe('/topic/messages/' + roomId, function (msg) {
+                    const message = JSON.parse(msg.body);
+                    showMessage(message);
+                });
+            }, function (error) {
+                document.getElementById('status').innerHTML = '❌ Error: ' + error;
+                document.getElementById('status').className = 'error';
+            });
+        }
+
+        function disconnect() {
+            if (stompClient) {
+                stompClient.disconnect();
+                document.getElementById('status').innerHTML = '🔴 Disconnected';
+            }
+        }
+
+        function sendMessage() {
+            const roomId = document.getElementById('roomId').value;
+            const sender = document.getElementById('sender').value;
+            const content = document.getElementById('content').value;
+
+            stompClient.send('/app/sendMessage/' + roomId, {}, JSON.stringify({
+                sender: sender,
+                content: content
+            }));
+
+            document.getElementById('content').value = '';
+        }
+
+        function showMessage(msg) {
+            const div = document.getElementById('messages');
+            div.innerHTML += '<div class="msg"><b>' + msg.sender + ':</b> ' + msg.content +
+                ' <small>(' + msg.timestamp + ')</small></div>';
+            div.scrollTop = div.scrollHeight;
+        }
+    </script>
+</body>
+</html>
