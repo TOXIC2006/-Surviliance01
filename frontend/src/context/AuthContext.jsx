@@ -2,45 +2,98 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+const DEFAULT_DEMO_USER = {
+  userId: 'user_alex_01',
+  username: 'alex_morgan',
+  name: 'Alex Morgan',
+  role: 'ADMIN',
+  email: 'alex.morgan@pulsechat.io',
+  avatar: '',
+  initials: 'AM',
+  statusMessage: 'Building the future of real-time communication ⚡',
+  presence: 'online', // 'online' | 'busy' | 'away' | 'offline'
+};
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    if (savedToken && savedUser) {
-      setToken(savedToken);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('pulsechat_user');
+    if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        return JSON.parse(savedUser);
       } catch {
-        localStorage.removeItem('user');
+        // fallback
       }
     }
-    setLoading(false);
-  }, []);
+    return DEFAULT_DEMO_USER;
+  });
 
-  function loginUser(authResponse) {
-    const { token: jwt, username, userId, role } = authResponse;
-    const userData = { username, userId, role };
-    localStorage.setItem('token', jwt);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setToken(jwt);
+  const [token, setToken] = useState(() => localStorage.getItem('pulsechat_token') || 'demo-jwt-token-123');
+  const [presence, setPresence] = useState('online');
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('pulsechat_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('pulsechat_user');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('pulsechat_token', token);
+    } else {
+      localStorage.removeItem('pulsechat_token');
+    }
+  }, [token]);
+
+  function loginUser(authData) {
+    const { token: jwt, username, userId, role, name, email } = authData;
+    const userData = {
+      userId: userId || `user_${Date.now()}`,
+      username: username || 'user',
+      name: name || username || 'User',
+      role: role || 'USER',
+      email: email || `${username}@pulsechat.io`,
+      initials: (name || username || 'U').slice(0, 2).toUpperCase(),
+      statusMessage: 'Available',
+      presence: 'online',
+    };
+    setToken(jwt || 'token_' + Date.now());
     setUser(userData);
   }
 
   function logoutUser() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
+    setUser(DEFAULT_DEMO_USER);
   }
 
-  const isAuthenticated = !!token;
+  function updateUserProfile(updates) {
+    setUser((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  }
+
+  function setUserPresence(newPresence) {
+    setPresence(newPresence);
+    setUser((prev) => ({
+      ...prev,
+      presence: newPresence,
+    }));
+  }
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, loading, loginUser, logoutUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated: true,
+        presence,
+        setUserPresence,
+        updateUserProfile,
+        loginUser,
+        logoutUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

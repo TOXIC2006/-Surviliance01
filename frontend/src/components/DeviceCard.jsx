@@ -1,35 +1,38 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Home, Car, QrCode, MessageSquare, Video, Shield, ChevronRight } from 'lucide-react';
 import './DeviceCard.css';
 
 export default function DeviceCard({ device }) {
-  const navigate = useNavigate();
-
-  const icon = device.type === 'HOME' ? '🏠' : '🚗';
-  const typeLabel = device.type === 'HOME' ? 'Home' : 'Car';
-  const badgeClass = device.type === 'HOME' ? 'badge-purple' : 'badge-cyan';
+  const isHome = device.type === 'HOME';
 
   return (
-    <div className="device-card glass" onClick={() => navigate(`/devices/${device.id}`)}>
+    <div className="device-card-saas">
       <div className="device-card-header">
-        <div className="device-card-icon">{icon}</div>
-        <span className={`badge ${badgeClass}`}>{typeLabel}</span>
-      </div>
-      <h3 className="device-card-name">{device.name}</h3>
-      {device.description && (
-        <p className="device-card-desc">{device.description}</p>
-      )}
-      {device.location && (
-        <div className="device-card-location">
-          <span className="device-card-location-icon">📍</span>
-          {device.location}
+        <div className="device-card-icon-badge" style={{ backgroundColor: isHome ? 'var(--primary-light)' : 'rgba(245, 158, 11, 0.12)', color: isHome ? 'var(--primary)' : 'var(--status-warning)' }}>
+          {isHome ? <Home size={20} /> : <Car size={20} />}
         </div>
-      )}
-      <div className="device-card-footer">
-        <span className="device-card-status">
-          <span className="status-dot"></span>
-          Active
+        <div className="device-card-titles">
+          <h3 className="device-name-text">{device.name}</h3>
+          <span className="device-location-text">{device.location || 'Surveillance Zone'}</span>
+        </div>
+        <span className="device-status-pill online">
+          <span className="status-dot-sm" />
+          Online
         </span>
-        <span className="device-card-arrow">→</span>
+      </div>
+
+      <p className="device-desc-text">{device.description || 'Active real-time video surveillance and sensor monitoring.'}</p>
+
+      <div className="device-card-footer">
+        <Link to={`/devices/${device.id}`} className="btn btn-secondary btn-sm">
+          <QrCode size={14} />
+          <span>Access QR</span>
+        </Link>
+
+        <Link to={`/chat/device_${device.id}`} className="btn btn-primary btn-sm">
+          <MessageSquare size={14} />
+          <span>Live Intercom</span>
+        </Link>
       </div>
     </div>
   );
